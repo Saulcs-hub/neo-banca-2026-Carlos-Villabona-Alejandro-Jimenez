@@ -1,7 +1,8 @@
 package co.edu.unab.neobanca.app;
 
 import co.edu.unab.neobanca.productos.CuentaAhorros;
-
+import co.edu.unab.neobanca.componentes.ConvenioEmpresarial;
+import co.edu.unab.neobanca.productos.CuentaNomina;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -58,6 +59,53 @@ public class Main {
         System.out.println(
                 "Estado: "
                         + cuenta.getEstado()
+        );
+        System.out.println();
+        System.out.println("=== PRUEBA CUENTA DE NÓMINA ===");
+
+        ConvenioEmpresarial convenio =
+                new ConvenioEmpresarial("CONV-001");
+
+        CuentaNomina cuentaNomina =
+                new CuentaNomina(
+                        "NOM-001",
+                        convenio
+                );
+
+        cuentaNomina.recibirPagoDeNomina(
+                new BigDecimal("2500000")
+        );
+
+        System.out.println(
+                "Cuenta: "
+                        + cuentaNomina.getNumeroProducto()
+        );
+
+        System.out.println(
+                "Saldo: "
+                        + moneda.format(
+                        cuentaNomina.consultarSaldo()
+                )
+        );
+
+        System.out.println(
+                "Convenio: "
+                        + cuentaNomina
+                        .getConvenio()
+                        .getCodigoConvenio()
+        );
+        cuentaNomina.desvincularConvenio();
+
+        System.out.println(
+                "Saldo después de desvincular convenio: "
+                        + moneda.format(
+                        cuentaNomina.consultarSaldo()
+                )
+        );
+
+        System.out.println(
+                "¿Tiene convenio?: "
+                        + (cuentaNomina.getConvenio() != null)
         );
     }
 }
