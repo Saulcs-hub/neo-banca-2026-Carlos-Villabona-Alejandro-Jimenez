@@ -1,5 +1,6 @@
 package co.edu.unab.neobanca.app;
 
+import co.edu.unab.neobanca.personas.PersonaJuridica;
 import co.edu.unab.neobanca.productos.CuentaAhorros;
 import co.edu.unab.neobanca.componentes.ConvenioEmpresarial;
 import co.edu.unab.neobanca.productos.CuentaNomina;
@@ -8,6 +9,9 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import co.edu.unab.neobanca.productos.PrestamoPersonal;
 import co.edu.unab.neobanca.productos.TarjetaCredito;
+import co.edu.unab.neobanca.personas.PersonaNatural;
+import java.time.LocalDate;
+import co.edu.unab.neobanca.personas.Beneficiario;
 
 public class Main {
 
@@ -378,5 +382,183 @@ public class Main {
                         .getTalonarioRetiro()
                         .isVigente()
         );
+
+        System.out.println();
+        System.out.println(
+                "=== PRUEBA PERSONA NATURAL ==="
+        );
+
+        PersonaNatural cliente =
+                new PersonaNatural(
+                        "1098765432",
+                        "Carlos Villabona",
+                        "carlos@email.com",
+                        750,
+                        LocalDate.of(2003, 5, 10),
+                        "Ingeniero de Sistemas"
+                );
+
+        System.out.println(
+                "Identificación: "
+                        + cliente.getIdentificacion()
+        );
+
+        System.out.println(
+                "Nombre: "
+                        + cliente.getNombre()
+        );
+
+        System.out.println(
+                "Email: "
+                        + cliente.getEmail()
+        );
+
+        System.out.println(
+                "Edad: "
+                        + cliente.getEdad()
+        );
+
+        System.out.println(
+                "Profesión: "
+                        + cliente.getProfesion()
+        );
+
+        System.out.println(
+                "Puntaje crediticio: "
+                        + cliente.getPuntajeCrediticio()
+        );
+
+        System.out.println(
+                "Rol en el banco: "
+                        + cliente.getRolEnElBanco()
+        );
+
+        cliente.vincularProducto(cuenta);
+
+        System.out.println(
+                "Cantidad de productos vinculados: "
+                        + cliente.getProductos().size()
+        );
+
+        System.out.println(
+                "Producto vinculado: "
+                        + cliente
+                        .getProductos()
+                        .get(0)
+                        .getNumeroProducto()
+        );
+
+        System.out.println();
+        System.out.println(
+                "=== PRUEBA PERSONA JURÍDICA ==="
+        );
+
+        PersonaJuridica empresa =
+                new PersonaJuridica(
+                        "EMP-001",
+                        "NeoTech Colombia",
+                        "contacto@neotech.com",
+                        820,
+                        "900123456-7",
+                        "NeoTech Colombia S.A.S.",
+                        cliente
+                );
+        System.out.println(
+                "Identificación: "
+                        + empresa.getIdentificacion()
+        );
+
+        System.out.println(
+                "Razón social: "
+                        + empresa.getRazonSocial()
+        );
+
+        System.out.println(
+                "NIT: "
+                        + empresa.getNit()
+        );
+
+        System.out.println(
+                "Puntaje crediticio: "
+                        + empresa.getPuntajeCrediticio()
+        );
+
+        System.out.println(
+                "Rol en el banco: "
+                        + empresa.getRolEnElBanco()
+        );
+
+        System.out.println(
+                "Representante legal: "
+                        + empresa
+                        .getRepresentanteLegal()
+                        .getNombre()
+        );
+
+        PersonaNatural nuevoRepresentante =
+                new PersonaNatural(
+                        "1099999999",
+                        "Alejandro Jimenez",
+                        "alejandro@email.com",
+                        720,
+                        LocalDate.of(2002, 8, 20),
+                        "Administrador de Empresas"
+                );
+
+        empresa.cambiarRepresentanteLegal(
+                nuevoRepresentante
+        );
+
+        System.out.println(
+                "Nuevo representante legal: "
+                        + empresa
+                        .getRepresentanteLegal()
+                        .getNombre()
+        );
+
+        System.out.println();
+        System.out.println(
+                "=== PRUEBA BENEFICIARIOS ==="
+        );
+
+        Beneficiario beneficiario1 =
+                new Beneficiario(
+                        "María Villabona",
+                        "Madre",
+                        "3001234567"
+                );
+
+        Beneficiario beneficiario2 =
+                new Beneficiario(
+                        "Laura Villabona",
+                        "Hermana",
+                        "3019876543"
+                );
+
+        cliente.registrarBeneficiario(
+                beneficiario1
+        );
+
+        cliente.registrarBeneficiario(
+                beneficiario2
+        );
+
+        System.out.println(
+                "Cantidad de beneficiarios: "
+                        + cliente.getBeneficiarios().size()
+        );
+
+        for (Beneficiario beneficiario
+                : cliente.getBeneficiarios()) {
+
+            System.out.println(
+                    "- "
+                            + beneficiario.getNombre()
+                            + " | "
+                            + beneficiario.getParentesco()
+                            + " | "
+                            + beneficiario.getTelefonoContacto()
+            );
+        }
     }
 }
