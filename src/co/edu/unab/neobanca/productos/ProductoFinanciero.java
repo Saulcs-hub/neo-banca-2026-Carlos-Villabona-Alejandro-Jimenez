@@ -94,6 +94,17 @@ public abstract class ProductoFinanciero {
     }
 
     public final void cerrar() {
+
+        if (estado == EstadoProducto.CERRADO) {
+            return;
+        }
+
         estado = EstadoProducto.CERRADO;
+
+        alCerrar();
+    }
+
+    protected void alCerrar() {
+        // Hook para comportamientos específicos de las subclases.
     }
 }

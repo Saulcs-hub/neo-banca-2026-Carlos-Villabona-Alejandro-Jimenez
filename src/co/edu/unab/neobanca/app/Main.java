@@ -22,7 +22,8 @@ public class Main {
 
         CuentaAhorros cuenta = new CuentaAhorros(
                 "AH-001",
-                new BigDecimal("0.005")
+                new BigDecimal("0.005"),
+                "TAL-001"
         );
 
         System.out.println(
@@ -348,6 +349,34 @@ public class Main {
                         + moneda.format(
                         tarjetaLimite.getDeudaActual()
                 )
+        );
+
+        System.out.println(
+                "Talonario: "
+                        + cuenta
+                        .getTalonarioRetiro()
+                        .getNumeroSerie()
+        );
+
+        System.out.println(
+                "Talonario vigente antes del cierre: "
+                        + cuenta
+                        .getTalonarioRetiro()
+                        .isVigente()
+        );
+
+        cuenta.cerrar();
+
+        System.out.println(
+                "Estado después de cerrar la cuenta: "
+                        + cuenta.getEstado()
+        );
+
+        System.out.println(
+                "Talonario vigente después del cierre: "
+                        + cuenta
+                        .getTalonarioRetiro()
+                        .isVigente()
         );
     }
 }
