@@ -4,6 +4,7 @@ package co.edu.unab.neobanca.app;
 import co.edu.unab.neobanca.componentes.ConvenioEmpresarial;
 
 // Infraestructura
+import co.edu.unab.neobanca.contratos.ProductoSostenible;
 import co.edu.unab.neobanca.infraestructura.CajeroAutomatico;
 import co.edu.unab.neobanca.infraestructura.Computador;
 import co.edu.unab.neobanca.infraestructura.Sucursal;
@@ -17,10 +18,7 @@ import co.edu.unab.neobanca.personas.PersonaJuridica;
 import co.edu.unab.neobanca.personas.PersonaNatural;
 
 // Productos
-import co.edu.unab.neobanca.productos.CuentaAhorros;
-import co.edu.unab.neobanca.productos.CuentaNomina;
-import co.edu.unab.neobanca.productos.PrestamoPersonal;
-import co.edu.unab.neobanca.productos.TarjetaCredito;
+import co.edu.unab.neobanca.productos.*;
 
 // Java
 import java.math.BigDecimal;
@@ -949,6 +947,74 @@ public class Main {
                         atm.getEfectivoDisponible()
                 )
         );
+
+        System.out.println();
+        System.out.println(
+                "=== PRUEBA PRODUCTOS SOSTENIBLES ==="
+        );
+
+        CuentaReforestacion cuentaVerde =
+                new CuentaReforestacion(
+                        "REF-001",
+                        100
+                );
+
+        CreditoPanelesSolares creditoSolar =
+                new CreditoPanelesSolares(
+                        "SOL-001",
+                        new BigDecimal("30000000"),
+                        new BigDecimal("0.12"),
+                        new BigDecimal("8")
+                );
+
+        System.out.println(
+                "Árboles financiados: "
+                        + cuentaVerde.getArbolesFinanciados()
+        );
+
+        System.out.println(
+                "CO2 evitado por reforestación: "
+                        + cuentaVerde
+                        .calcularHuellaCarbonoEvitada()
+                        + " kg"
+        );
+
+        System.out.println(
+                "kWp instalados: "
+                        + creditoSolar.getKilovatiosPicoInstalados()
+        );
+
+        System.out.println(
+                "CO2 evitado por paneles solares: "
+                        + creditoSolar
+                        .calcularHuellaCarbonoEvitada()
+                        + " kg"
+        );
+
+        ProductoSostenible[] productosSostenibles = {
+                cuentaVerde,
+                creditoSolar
+        };
+
+        System.out.println();
+        System.out.println(
+                "--- CERTIFICADOS ECOLÓGICOS ---"
+        );
+
+        for (ProductoSostenible producto
+                : productosSostenibles) {
+
+            var certificado =
+                    producto.generarCertificadoEcologico();
+
+            System.out.println(
+                    "Certificado: "
+                            + certificado.getCodigo()
+                            + " | CO2 evitado: "
+                            + certificado.getKgCO2Evitados()
+                            + " kg"
+            );
+        }
 
 
         // =========================================================
