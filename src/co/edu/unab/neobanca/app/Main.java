@@ -1,10 +1,15 @@
 package co.edu.unab.neobanca.app;
 
+// Core
+import co.edu.unab.neobanca.core.Banco;
+
 // Componentes
 import co.edu.unab.neobanca.componentes.ConvenioEmpresarial;
 
-// Infraestructura
+// Contratos
 import co.edu.unab.neobanca.contratos.ProductoSostenible;
+
+// Infraestructura
 import co.edu.unab.neobanca.infraestructura.CajeroAutomatico;
 import co.edu.unab.neobanca.infraestructura.Computador;
 import co.edu.unab.neobanca.infraestructura.Sucursal;
@@ -18,7 +23,12 @@ import co.edu.unab.neobanca.personas.PersonaJuridica;
 import co.edu.unab.neobanca.personas.PersonaNatural;
 
 // Productos
-import co.edu.unab.neobanca.productos.*;
+import co.edu.unab.neobanca.productos.CreditoPanelesSolares;
+import co.edu.unab.neobanca.productos.CuentaAhorros;
+import co.edu.unab.neobanca.productos.CuentaNomina;
+import co.edu.unab.neobanca.productos.CuentaReforestacion;
+import co.edu.unab.neobanca.productos.PrestamoPersonal;
+import co.edu.unab.neobanca.productos.TarjetaCredito;
 
 // Java
 import java.math.BigDecimal;
@@ -26,26 +36,54 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Locale;
 
-import co.edu.unab.neobanca.core.Banco;
-
 public class Main {
+
+    private static final NumberFormat MONEDA =
+            NumberFormat.getCurrencyInstance(
+                    Locale.forLanguageTag("es-CO")
+            );
 
     public static void main(String[] args) {
 
-        NumberFormat moneda =
-                NumberFormat.getCurrencyInstance(
-                        Locale.forLanguageTag("es-CO")
-                );
+        System.out.println("================================");
+        System.out.println("        NEO-BANCA 2026");
+        System.out.println("================================");
 
-        System.out.println("=== NEO-BANCA 2026 ===");
+        probarCuentaAhorros();
+        probarCuentaNomina();
+        probarPrestamoPersonal();
+        probarTarjetaCredito();
 
+        probarPersonasYBeneficiarios();
+        probarEmpleadosEInfraestructura();
 
-        // =========================================================
-        // PRUEBA CUENTA DE AHORROS
-        // =========================================================
+        probarProductosSostenibles();
+        probarIntegracionBanco();
 
         System.out.println();
-        System.out.println("=== PRUEBA CUENTA DE AHORROS ===");
+        System.out.println("================================");
+        System.out.println("     FIN DE PRUEBAS NEO-BANCA");
+        System.out.println("================================");
+    }
+
+    // =========================================================
+    // UTILIDAD
+    // =========================================================
+
+    private static void titulo(String texto) {
+
+        System.out.println();
+        System.out.println("=== " + texto + " ===");
+    }
+
+
+    // =========================================================
+    // CUENTA DE AHORROS
+    // =========================================================
+
+    private static void probarCuentaAhorros() {
+
+        titulo("PRUEBA CUENTA DE AHORROS");
 
         CuentaAhorros cuenta =
                 new CuentaAhorros(
@@ -61,7 +99,7 @@ public class Main {
 
         System.out.println(
                 "Saldo inicial: "
-                        + moneda.format(
+                        + MONEDA.format(
                         cuenta.consultarSaldo()
                 )
         );
@@ -73,7 +111,7 @@ public class Main {
 
         System.out.println(
                 "Saldo después de consignar: "
-                        + moneda.format(
+                        + MONEDA.format(
                         cuenta.consultarSaldo()
                 )
         );
@@ -83,12 +121,12 @@ public class Main {
 
         System.out.println(
                 "Intereses abonados: "
-                        + moneda.format(intereses)
+                        + MONEDA.format(intereses)
         );
 
         System.out.println(
                 "Saldo final: "
-                        + moneda.format(
+                        + MONEDA.format(
                         cuenta.consultarSaldo()
                 )
         );
@@ -99,12 +137,82 @@ public class Main {
         );
 
 
-        // =========================================================
-        // PRUEBA CUENTA DE NÓMINA
-        // =========================================================
+        // -----------------------------------------------------
+        // HISTORIAL DE TRANSACCIONES
+        // -----------------------------------------------------
 
         System.out.println();
-        System.out.println("=== PRUEBA CUENTA DE NÓMINA ===");
+        System.out.println(
+                "--- HISTORIAL DE TRANSACCIONES ---"
+        );
+
+        for (var transaccion
+                : cuenta.getTransacciones()) {
+
+            System.out.println(
+                    transaccion.getTipo()
+                            + " | "
+                            + MONEDA.format(
+                            transaccion.getMonto()
+                    )
+                            + " | "
+                            + transaccion.getDescripcion()
+            );
+
+            System.out.println(
+                    "  Conservar hasta mínimo: "
+                            + transaccion
+                            .getFechaMinimaEliminacion()
+            );
+        }
+
+
+        // -----------------------------------------------------
+        // CICLO DE VIDA DEL TALONARIO
+        // -----------------------------------------------------
+
+        System.out.println();
+        System.out.println(
+                "--- CICLO DE VIDA DEL TALONARIO ---"
+        );
+
+        System.out.println(
+                "Talonario: "
+                        + cuenta
+                        .getTalonarioRetiro()
+                        .getNumeroSerie()
+        );
+
+        System.out.println(
+                "Talonario vigente antes del cierre: "
+                        + cuenta
+                        .getTalonarioRetiro()
+                        .isVigente()
+        );
+
+        cuenta.cerrar();
+
+        System.out.println(
+                "Estado después de cerrar la cuenta: "
+                        + cuenta.getEstado()
+        );
+
+        System.out.println(
+                "Talonario vigente después del cierre: "
+                        + cuenta
+                        .getTalonarioRetiro()
+                        .isVigente()
+        );
+    }
+
+
+    // =========================================================
+    // CUENTA DE NÓMINA
+    // =========================================================
+
+    private static void probarCuentaNomina() {
+
+        titulo("PRUEBA CUENTA DE NÓMINA");
 
         ConvenioEmpresarial convenio =
                 new ConvenioEmpresarial(
@@ -128,7 +236,7 @@ public class Main {
 
         System.out.println(
                 "Saldo: "
-                        + moneda.format(
+                        + MONEDA.format(
                         cuentaNomina.consultarSaldo()
                 )
         );
@@ -140,23 +248,10 @@ public class Main {
                         .getCodigoConvenio()
         );
 
-        cuentaNomina.desvincularConvenio();
-
-        System.out.println(
-                "Saldo después de desvincular convenio: "
-                        + moneda.format(
-                        cuentaNomina.consultarSaldo()
-                )
-        );
-
-        System.out.println(
-                "¿Tiene convenio?: "
-                        + (cuentaNomina.getConvenio() != null)
-        );
-
         System.out.println(
                 "Puntos acumulados: "
-                        + cuentaNomina.getPuntosAcumulados()
+                        + cuentaNomina
+                        .getPuntosAcumulados()
         );
 
         boolean redencion =
@@ -169,18 +264,33 @@ public class Main {
 
         System.out.println(
                 "Puntos restantes: "
-                        + cuentaNomina.getPuntosAcumulados()
+                        + cuentaNomina
+                        .getPuntosAcumulados()
         );
 
+        cuentaNomina.desvincularConvenio();
 
-        // =========================================================
-        // PRUEBA PRÉSTAMO PERSONAL
-        // =========================================================
-
-        System.out.println();
         System.out.println(
-                "=== PRUEBA PRÉSTAMO PERSONAL ==="
+                "¿Tiene convenio después de desvincular?: "
+                        + (cuentaNomina.getConvenio() != null)
         );
+
+        System.out.println(
+                "Saldo después de desvincular convenio: "
+                        + MONEDA.format(
+                        cuentaNomina.consultarSaldo()
+                )
+        );
+    }
+
+
+    // =========================================================
+    // PRÉSTAMO PERSONAL
+    // =========================================================
+
+    private static void probarPrestamoPersonal() {
+
+        titulo("PRUEBA PRÉSTAMO PERSONAL");
 
         PrestamoPersonal prestamo =
                 new PrestamoPersonal(
@@ -199,14 +309,14 @@ public class Main {
 
         System.out.println(
                 "Monto aprobado: "
-                        + moneda.format(
+                        + MONEDA.format(
                         prestamo.getMontoAprobado()
                 )
         );
 
         System.out.println(
                 "Deuda actual: "
-                        + moneda.format(
+                        + MONEDA.format(
                         prestamo.getDeudaActual()
                 )
         );
@@ -218,7 +328,7 @@ public class Main {
 
         System.out.println(
                 "Valor cuota: "
-                        + moneda.format(
+                        + MONEDA.format(
                         prestamo.getValorCuota()
                 )
         );
@@ -234,18 +344,16 @@ public class Main {
 
         System.out.println(
                 "Deuda después de pagar una cuota: "
-                        + moneda.format(
+                        + MONEDA.format(
                         prestamo.getDeudaActual()
                 )
         );
-
-        System.out.println();
 
         prestamo.saldarPorSiniestro();
 
         System.out.println(
                 "Deuda después de activar el seguro: "
-                        + moneda.format(
+                        + MONEDA.format(
                         prestamo.getDeudaActual()
                 )
         );
@@ -261,16 +369,16 @@ public class Main {
                             + e.getMessage()
             );
         }
+    }
 
 
-        // =========================================================
-        // PRUEBA TARJETA DE CRÉDITO
-        // =========================================================
+    // =========================================================
+    // TARJETA DE CRÉDITO
+    // =========================================================
 
-        System.out.println();
-        System.out.println(
-                "=== PRUEBA TARJETA DE CRÉDITO ==="
-        );
+    private static void probarTarjetaCredito() {
+
+        titulo("PRUEBA TARJETA DE CRÉDITO");
 
         TarjetaCredito tarjeta =
                 new TarjetaCredito(
@@ -289,14 +397,14 @@ public class Main {
 
         System.out.println(
                 "Cupo aprobado: "
-                        + moneda.format(
+                        + MONEDA.format(
                         tarjeta.getMontoAprobado()
                 )
         );
 
         System.out.println(
                 "Deuda inicial: "
-                        + moneda.format(
+                        + MONEDA.format(
                         tarjeta.getDeudaActual()
                 )
         );
@@ -327,7 +435,7 @@ public class Main {
 
         System.out.println(
                 "Deuda después del consumo: "
-                        + moneda.format(
+                        + MONEDA.format(
                         tarjeta.getDeudaActual()
                 )
         );
@@ -343,7 +451,7 @@ public class Main {
 
         System.out.println(
                 "Deuda después del pago: "
-                        + moneda.format(
+                        + MONEDA.format(
                         tarjeta.getDeudaActual()
                 )
         );
@@ -370,13 +478,13 @@ public class Main {
         );
 
 
-        // =========================================================
-        // PRUEBA LÍMITE DE CUPO
-        // =========================================================
+        // -----------------------------------------------------
+        // VALIDACIÓN DE CUPO
+        // -----------------------------------------------------
 
         System.out.println();
         System.out.println(
-                "=== PRUEBA LÍMITE DE CUPO ==="
+                "--- VALIDACIÓN DE LÍMITE DE CUPO ---"
         );
 
         TarjetaCredito tarjetaLimite =
@@ -406,58 +514,20 @@ public class Main {
 
         System.out.println(
                 "Deuda después del intento: "
-                        + moneda.format(
+                        + MONEDA.format(
                         tarjetaLimite.getDeudaActual()
                 )
         );
+    }
 
 
-        // =========================================================
-        // PRUEBA CICLO DE VIDA TALONARIO
-        // =========================================================
+    // =========================================================
+    // PERSONAS, CLIENTES Y BENEFICIARIOS
+    // =========================================================
 
-        System.out.println();
-        System.out.println(
-                "=== PRUEBA TALONARIO DE RETIRO ==="
-        );
+    private static void probarPersonasYBeneficiarios() {
 
-        System.out.println(
-                "Talonario: "
-                        + cuenta
-                        .getTalonarioRetiro()
-                        .getNumeroSerie()
-        );
-
-        System.out.println(
-                "Talonario vigente antes del cierre: "
-                        + cuenta
-                        .getTalonarioRetiro()
-                        .isVigente()
-        );
-
-        cuenta.cerrar();
-
-        System.out.println(
-                "Estado después de cerrar la cuenta: "
-                        + cuenta.getEstado()
-        );
-
-        System.out.println(
-                "Talonario vigente después del cierre: "
-                        + cuenta
-                        .getTalonarioRetiro()
-                        .isVigente()
-        );
-
-
-        // =========================================================
-        // PRUEBA PERSONA NATURAL
-        // =========================================================
-
-        System.out.println();
-        System.out.println(
-                "=== PRUEBA PERSONA NATURAL ==="
-        );
+        titulo("PRUEBA PERSONAS Y CLIENTES");
 
         PersonaNatural cliente =
                 new PersonaNatural(
@@ -508,8 +578,20 @@ public class Main {
                         + cliente.getRolEnElBanco()
         );
 
+
+        // -----------------------------------------------------
+        // VINCULACIÓN DE PRODUCTO
+        // -----------------------------------------------------
+
+        CuentaAhorros cuentaCliente =
+                new CuentaAhorros(
+                        "AH-CLI-001",
+                        new BigDecimal("0.004"),
+                        "TAL-CLI-001"
+                );
+
         cliente.vincularProducto(
-                cuenta
+                cuentaCliente
         );
 
         System.out.println(
@@ -528,18 +610,18 @@ public class Main {
         );
 
 
-        // =========================================================
-        // PRUEBA PERSONA JURÍDICA
-        // =========================================================
+        // -----------------------------------------------------
+        // PERSONA JURÍDICA
+        // -----------------------------------------------------
 
         System.out.println();
         System.out.println(
-                "=== PRUEBA PERSONA JURÍDICA ==="
+                "--- PERSONA JURÍDICA ---"
         );
 
         PersonaJuridica empresa =
                 new PersonaJuridica(
-                        "EMP-001",
+                        "PJ-001",
                         "NeoTech Colombia",
                         "contacto@neotech.com",
                         820,
@@ -547,11 +629,6 @@ public class Main {
                         "NeoTech Colombia S.A.S.",
                         cliente
                 );
-
-        System.out.println(
-                "Identificación: "
-                        + empresa.getIdentificacion()
-        );
 
         System.out.println(
                 "Razón social: "
@@ -564,12 +641,7 @@ public class Main {
         );
 
         System.out.println(
-                "Puntaje crediticio: "
-                        + empresa.getPuntajeCrediticio()
-        );
-
-        System.out.println(
-                "Rol en el banco: "
+                "Rol: "
                         + empresa.getRolEnElBanco()
         );
 
@@ -606,13 +678,13 @@ public class Main {
         );
 
 
-        // =========================================================
-        // PRUEBA BENEFICIARIOS
-        // =========================================================
+        // -----------------------------------------------------
+        // BENEFICIARIOS
+        // -----------------------------------------------------
 
         System.out.println();
         System.out.println(
-                "=== PRUEBA BENEFICIARIOS ==="
+                "--- BENEFICIARIOS ---"
         );
 
         Beneficiario beneficiario1 =
@@ -653,26 +725,27 @@ public class Main {
                             + " | "
                             + beneficiario.getParentesco()
                             + " | "
-                            + beneficiario.getTelefonoContacto()
+                            + beneficiario
+                            .getTelefonoContacto()
             );
         }
+    }
 
 
-        // =========================================================
-        // PRUEBA EMPLEADO CAJERO
-        // =========================================================
+    // =========================================================
+    // EMPLEADOS E INFRAESTRUCTURA
+    // =========================================================
 
-        System.out.println();
-        System.out.println(
-                "=== PRUEBA EMPLEADO CAJERO ==="
-        );
+    private static void probarEmpleadosEInfraestructura() {
+
+        titulo("PRUEBA EMPLEADOS E INFRAESTRUCTURA");
 
         Sucursal sucursalCentro =
                 new Sucursal(
                         "SUC-001"
                 );
 
-        Computador computadorCaja =
+        Computador computador =
                 new Computador(
                         "PC-CAJA-001"
                 );
@@ -686,16 +759,12 @@ public class Main {
                         5
                 );
 
-        /*
-         * Usamos la sucursal para gestionar la relación.
-         * Sucursal conoce al cajero y el cajero conoce su sucursal.
-         */
         sucursalCentro.vincularCajero(
                 cajero
         );
 
         cajero.asignarComputador(
-                computadorCaja
+                computador
         );
 
         System.out.println(
@@ -739,34 +808,36 @@ public class Main {
 
         System.out.println(
                 "Computador asignado: "
-                        + computadorCaja.isAsignado()
+                        + computador.isAsignado()
         );
 
         cajero.devolverComputador();
 
         System.out.println(
                 "Empleado tiene computador: "
-                        + (cajero.getComputadorAsignado() != null)
+                        + (cajero
+                        .getComputadorAsignado()
+                        != null)
         );
 
         System.out.println(
                 "Computador sigue asignado: "
-                        + computadorCaja.isAsignado()
+                        + computador.isAsignado()
         );
 
         System.out.println(
-                "Código del computador que sigue en inventario: "
-                        + computadorCaja.getCodigoInventario()
+                "Computador disponible en inventario: "
+                        + computador.getCodigoInventario()
         );
 
 
-        // =========================================================
-        // PRUEBA ASESOR EXTERNO
-        // =========================================================
+        // -----------------------------------------------------
+        // ASESOR EXTERNO
+        // -----------------------------------------------------
 
         System.out.println();
         System.out.println(
-                "=== PRUEBA ASESOR EXTERNO ==="
+                "--- ASESOR EXTERNO ---"
         );
 
         AsesorExterno asesor =
@@ -778,37 +849,47 @@ public class Main {
                         "Bucaramanga - Zona Norte"
                 );
 
+        PersonaNatural clienteAsesor =
+                new PersonaNatural(
+                        "1098000001",
+                        "Carlos Villabona",
+                        "carlos@email.com",
+                        750,
+                        LocalDate.of(
+                                2003,
+                                5,
+                                10
+                        ),
+                        "Ingeniero de Sistemas"
+                );
+
+        PersonaJuridica empresaAsesor =
+                new PersonaJuridica(
+                        "PJ-ASE-001",
+                        "NeoTech Colombia",
+                        "contacto@neotech.com",
+                        820,
+                        "900123456-7",
+                        "NeoTech Colombia S.A.S.",
+                        clienteAsesor
+                );
+
+        asesor.captarCliente(
+                clienteAsesor
+        );
+
+        asesor.captarCliente(
+                empresaAsesor
+        );
+
         System.out.println(
                 "Empleado: "
                         + asesor.getNombre()
         );
 
         System.out.println(
-                "ID corporativo: "
-                        + asesor.getIdCorporativo()
-        );
-
-        System.out.println(
-                "Rol: "
-                        + asesor.getRolEnElBanco()
-        );
-
-        System.out.println(
                 "Zona geográfica: "
                         + asesor.getZonaGeografica()
-        );
-
-        System.out.println(
-                "Puesto: "
-                        + asesor.describirPuestoDeTrabajo()
-        );
-
-        asesor.captarCliente(
-                cliente
-        );
-
-        asesor.captarCliente(
-                empresa
         );
 
         System.out.println(
@@ -825,18 +906,19 @@ public class Main {
                     "- "
                             + clienteCaptado.getNombre()
                             + " | "
-                            + clienteCaptado.getRolEnElBanco()
+                            + clienteCaptado
+                            .getRolEnElBanco()
             );
         }
 
 
-        // =========================================================
-        // PRUEBA INFRAESTRUCTURA Y REASIGNACIÓN
-        // =========================================================
+        // -----------------------------------------------------
+        // CAJERO AUTOMÁTICO
+        // -----------------------------------------------------
 
         System.out.println();
         System.out.println(
-                "=== PRUEBA INFRAESTRUCTURA Y REASIGNACIÓN ==="
+                "--- CAJERO AUTOMÁTICO ---"
         );
 
         CajeroAutomatico atm =
@@ -850,11 +932,6 @@ public class Main {
 
         sucursalCentro.vincularCajeroAutomatico(
                 atm
-        );
-
-        System.out.println(
-                "Sucursal actual: "
-                        + sucursalCentro.getCodigo()
         );
 
         System.out.println(
@@ -873,7 +950,7 @@ public class Main {
 
         System.out.println(
                 "Efectivo ATM: "
-                        + moneda.format(
+                        + MONEDA.format(
                         atm.getEfectivoDisponible()
                 )
         );
@@ -883,11 +960,16 @@ public class Main {
         );
 
         System.out.println(
-                "Efectivo ATM después de dispensar: "
-                        + moneda.format(
+                "Efectivo después de dispensar: "
+                        + MONEDA.format(
                         atm.getEfectivoDisponible()
                 )
         );
+
+
+        // -----------------------------------------------------
+        // CIERRE Y REASIGNACIÓN
+        // -----------------------------------------------------
 
         Sucursal sucursalNorte =
                 new Sucursal(
@@ -900,7 +982,7 @@ public class Main {
 
         System.out.println();
         System.out.println(
-                "--- ESTADO DESPUÉS DEL CIERRE ---"
+                "--- REASIGNACIÓN POR CIERRE ---"
         );
 
         System.out.println(
@@ -923,14 +1005,14 @@ public class Main {
         );
 
         System.out.println(
-                "Cajeros en Sucursal Norte: "
+                "Cajeros en Norte: "
                         + sucursalNorte
                         .getCajeros()
                         .size()
         );
 
         System.out.println(
-                "ATM en Sucursal Norte: "
+                "ATM en Norte: "
                         + sucursalNorte
                         .getCajerosAutomaticos()
                         .size()
@@ -944,16 +1026,21 @@ public class Main {
         );
 
         System.out.println(
-                "Efectivo del ATM después de reasignarlo: "
-                        + moneda.format(
+                "Efectivo ATM después de reasignación: "
+                        + MONEDA.format(
                         atm.getEfectivoDisponible()
                 )
         );
+    }
 
-        System.out.println();
-        System.out.println(
-                "=== PRUEBA PRODUCTOS SOSTENIBLES ==="
-        );
+
+    // =========================================================
+    // PRODUCTOS SOSTENIBLES
+    // =========================================================
+
+    private static void probarProductosSostenibles() {
+
+        titulo("PRUEBA PRODUCTOS SOSTENIBLES");
 
         CuentaReforestacion cuentaVerde =
                 new CuentaReforestacion(
@@ -971,7 +1058,8 @@ public class Main {
 
         System.out.println(
                 "Árboles financiados: "
-                        + cuentaVerde.getArbolesFinanciados()
+                        + cuentaVerde
+                        .getArbolesFinanciados()
         );
 
         System.out.println(
@@ -983,7 +1071,8 @@ public class Main {
 
         System.out.println(
                 "kWp instalados: "
-                        + creditoSolar.getKilovatiosPicoInstalados()
+                        + creditoSolar
+                        .getKilovatiosPicoInstalados()
         );
 
         System.out.println(
@@ -1007,55 +1096,112 @@ public class Main {
                 : productosSostenibles) {
 
             var certificado =
-                    producto.generarCertificadoEcologico();
+                    producto
+                            .generarCertificadoEcologico();
 
             System.out.println(
                     "Certificado: "
                             + certificado.getCodigo()
                             + " | CO2 evitado: "
-                            + certificado.getKgCO2Evitados()
+                            + certificado
+                            .getKgCO2Evitados()
                             + " kg"
             );
         }
+    }
 
-        System.out.println();
-        System.out.println(
-                "--- HISTORIAL DE TRANSACCIONES ---"
-        );
 
-        for (var transaccion
-                : cuenta.getTransacciones()) {
+    // =========================================================
+    // INTEGRACIÓN DEL BANCO
+    // =========================================================
 
-            System.out.println(
-                    transaccion.getTipo()
-                            + " | "
-                            + moneda.format(
-                            transaccion.getMonto()
-                    )
-                            + " | "
-                            + transaccion.getDescripcion()
-            );
+    private static void probarIntegracionBanco() {
 
-            System.out.println(
-                    "  Conservar hasta mínimo: "
-                            + transaccion
-                            .getFechaMinimaEliminacion()
-            );
-        }
+        titulo("PRUEBA INTEGRACIÓN DEL BANCO");
 
         Banco banco =
-                new Banco("Neo-Banca 2026");
+                new Banco(
+                        "Neo-Banca 2026"
+                );
 
-        banco.registrarCliente(cliente);
-        banco.registrarCliente(empresa);
+        PersonaNatural cliente =
+                new PersonaNatural(
+                        "1098765432",
+                        "Carlos Villabona",
+                        "carlos@email.com",
+                        750,
+                        LocalDate.of(
+                                2003,
+                                5,
+                                10
+                        ),
+                        "Ingeniero de Sistemas"
+                );
 
-        banco.contratarEmpleado(cajero);
-        banco.contratarEmpleado(asesor);
+        PersonaJuridica empresa =
+                new PersonaJuridica(
+                        "PJ-BANCO-001",
+                        "NeoTech Colombia",
+                        "contacto@neotech.com",
+                        820,
+                        "900123456-7",
+                        "NeoTech Colombia S.A.S.",
+                        cliente
+                );
 
-        banco.agregarSucursal(sucursalCentro);
-        banco.agregarSucursal(sucursalNorte);
+        Cajero cajero =
+                new Cajero(
+                        "1099111222",
+                        "Juan Pérez",
+                        "juan.perez@neobanca.com",
+                        "EMP-CAJ-001",
+                        5
+                );
 
-        CuentaAhorros cuentaIntegracion =
+        AsesorExterno asesor =
+                new AsesorExterno(
+                        "1099555666",
+                        "Laura Gómez",
+                        "laura.gomez@neobanca.com",
+                        "EMP-ASE-001",
+                        "Bucaramanga - Zona Norte"
+                );
+
+        Sucursal sucursalCentro =
+                new Sucursal(
+                        "SUC-BANCO-001"
+                );
+
+        Sucursal sucursalNorte =
+                new Sucursal(
+                        "SUC-BANCO-002"
+                );
+
+        banco.registrarCliente(
+                cliente
+        );
+
+        banco.registrarCliente(
+                empresa
+        );
+
+        banco.contratarEmpleado(
+                cajero
+        );
+
+        banco.contratarEmpleado(
+                asesor
+        );
+
+        banco.agregarSucursal(
+                sucursalCentro
+        );
+
+        banco.agregarSucursal(
+                sucursalNorte
+        );
+
+        CuentaAhorros cuenta =
                 new CuentaAhorros(
                         "AH-INT-001",
                         new BigDecimal("0.004"),
@@ -1064,7 +1210,7 @@ public class Main {
 
         banco.abrirProducto(
                 cliente,
-                cuentaIntegracion
+                cuenta
         );
 
         System.out.println(
@@ -1074,37 +1220,37 @@ public class Main {
 
         System.out.println(
                 "Clientes registrados: "
-                        + banco.getClientes().size()
+                        + banco
+                        .getClientes()
+                        .size()
         );
 
         System.out.println(
                 "Empleados registrados: "
-                        + banco.getEmpleados().size()
+                        + banco
+                        .getEmpleados()
+                        .size()
         );
 
         System.out.println(
                 "Sucursales registradas: "
-                        + banco.getSucursales().size()
+                        + banco
+                        .getSucursales()
+                        .size()
         );
 
         System.out.println(
                 "Productos abiertos por el banco: "
-                        + banco.getProductos().size()
+                        + banco
+                        .getProductos()
+                        .size()
         );
 
         System.out.println(
                 "Productos de Carlos: "
-                        + cliente.getProductos().size()
-        );
-
-
-        // =========================================================
-        // FIN DE PRUEBAS
-        // =========================================================
-
-        System.out.println();
-        System.out.println(
-                "=== FIN DE PRUEBAS NEO-BANCA 2026 ==="
+                        + cliente
+                        .getProductos()
+                        .size()
         );
     }
 }
