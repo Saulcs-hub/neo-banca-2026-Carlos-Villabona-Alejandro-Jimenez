@@ -26,6 +26,7 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Locale;
 
+import co.edu.unab.neobanca.core.Banco;
 
 public class Main {
 
@@ -1041,6 +1042,60 @@ public class Main {
                             .getFechaMinimaEliminacion()
             );
         }
+
+        Banco banco =
+                new Banco("Neo-Banca 2026");
+
+        banco.registrarCliente(cliente);
+        banco.registrarCliente(empresa);
+
+        banco.contratarEmpleado(cajero);
+        banco.contratarEmpleado(asesor);
+
+        banco.agregarSucursal(sucursalCentro);
+        banco.agregarSucursal(sucursalNorte);
+
+        CuentaAhorros cuentaIntegracion =
+                new CuentaAhorros(
+                        "AH-INT-001",
+                        new BigDecimal("0.004"),
+                        "TAL-INT-001"
+                );
+
+        banco.abrirProducto(
+                cliente,
+                cuentaIntegracion
+        );
+
+        System.out.println(
+                "Banco: "
+                        + banco.getNombre()
+        );
+
+        System.out.println(
+                "Clientes registrados: "
+                        + banco.getClientes().size()
+        );
+
+        System.out.println(
+                "Empleados registrados: "
+                        + banco.getEmpleados().size()
+        );
+
+        System.out.println(
+                "Sucursales registradas: "
+                        + banco.getSucursales().size()
+        );
+
+        System.out.println(
+                "Productos abiertos por el banco: "
+                        + banco.getProductos().size()
+        );
+
+        System.out.println(
+                "Productos de Carlos: "
+                        + cliente.getProductos().size()
+        );
 
 
         // =========================================================
