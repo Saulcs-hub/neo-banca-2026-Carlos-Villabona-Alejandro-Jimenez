@@ -1,7 +1,5 @@
 package co.edu.unab.neobanca.personas;
-
 import co.edu.unab.neobanca.infraestructura.Sucursal;
-
 public class Cajero extends Empleado {
 
     private int numeroCubiculo;
