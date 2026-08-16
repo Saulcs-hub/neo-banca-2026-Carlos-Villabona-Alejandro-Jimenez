@@ -1,6 +1,6 @@
 package co.edu.unab.neobanca.app;
 
-import co.edu.unab.neobanca.personas.PersonaJuridica;
+import co.edu.unab.neobanca.personas.*;
 import co.edu.unab.neobanca.productos.CuentaAhorros;
 import co.edu.unab.neobanca.componentes.ConvenioEmpresarial;
 import co.edu.unab.neobanca.productos.CuentaNomina;
@@ -9,9 +9,11 @@ import java.text.NumberFormat;
 import java.util.Locale;
 import co.edu.unab.neobanca.productos.PrestamoPersonal;
 import co.edu.unab.neobanca.productos.TarjetaCredito;
-import co.edu.unab.neobanca.personas.PersonaNatural;
+
 import java.time.LocalDate;
-import co.edu.unab.neobanca.personas.Beneficiario;
+
+import co.edu.unab.neobanca.infraestructura.Sucursal;
+import co.edu.unab.neobanca.infraestructura.Computador;
 
 public class Main {
 
@@ -558,6 +560,153 @@ public class Main {
                             + beneficiario.getParentesco()
                             + " | "
                             + beneficiario.getTelefonoContacto()
+            );
+        }
+
+        System.out.println();
+        System.out.println(
+                "=== PRUEBA EMPLEADO CAJERO ==="
+        );
+
+        Sucursal sucursalCentro =
+                new Sucursal("SUC-001");
+
+        Computador computadorCaja =
+                new Computador("PC-CAJA-001");
+
+        Cajero cajero =
+                new Cajero(
+                        "1099111222",
+                        "Juan Pérez",
+                        "juan.perez@neobanca.com",
+                        "EMP-CAJ-001",
+                        5
+                );
+
+        cajero.asignarSucursal(
+                sucursalCentro
+        );
+
+        cajero.asignarComputador(
+                computadorCaja
+        );
+
+        System.out.println(
+                "Empleado: "
+                        + cajero.getNombre()
+        );
+
+        System.out.println(
+                "ID corporativo: "
+                        + cajero.getIdCorporativo()
+        );
+
+        System.out.println(
+                "Rol: "
+                        + cajero.getRolEnElBanco()
+        );
+
+        System.out.println(
+                "Puesto: "
+                        + cajero.describirPuestoDeTrabajo()
+        );
+
+        System.out.println(
+                "Cubículo: "
+                        + cajero.getNumeroCubiculo()
+        );
+
+        System.out.println(
+                "Sucursal: "
+                        + cajero
+                        .getSucursalAsignada()
+                        .getCodigo()
+        );
+
+        System.out.println(
+                "Computador: "
+                        + cajero
+                        .getComputadorAsignado()
+                        .getCodigoInventario()
+        );
+
+        System.out.println(
+                "Computador asignado: "
+                        + computadorCaja.isAsignado()
+        );
+
+        cajero.devolverComputador();
+
+        System.out.println(
+                "Empleado tiene computador: "
+                        + (cajero.getComputadorAsignado() != null)
+        );
+
+        System.out.println(
+                "Computador sigue asignado: "
+                        + computadorCaja.isAsignado()
+        );
+
+        System.out.println(
+                "Código del computador que sigue en inventario: "
+                        + computadorCaja.getCodigoInventario()
+        );
+
+        System.out.println();
+        System.out.println(
+                "=== PRUEBA ASESOR EXTERNO ==="
+        );
+
+        AsesorExterno asesor =
+                new AsesorExterno(
+                        "1099555666",
+                        "Laura Gómez",
+                        "laura.gomez@neobanca.com",
+                        "EMP-ASE-001",
+                        "Bucaramanga - Zona Norte"
+                );
+
+        System.out.println(
+                "Empleado: "
+                        + asesor.getNombre()
+        );
+
+        System.out.println(
+                "ID corporativo: "
+                        + asesor.getIdCorporativo()
+        );
+
+        System.out.println(
+                "Rol: "
+                        + asesor.getRolEnElBanco()
+        );
+
+        System.out.println(
+                "Zona geográfica: "
+                        + asesor.getZonaGeografica()
+        );
+
+        System.out.println(
+                "Puesto: "
+                        + asesor.describirPuestoDeTrabajo()
+        );
+
+        asesor.captarCliente(cliente);
+        asesor.captarCliente(empresa);
+
+        System.out.println(
+                "Clientes captados: "
+                        + asesor.getClientesCaptados().size()
+        );
+
+        for (Cliente clienteCaptado
+                : asesor.getClientesCaptados()) {
+
+            System.out.println(
+                    "- "
+                            + clienteCaptado.getNombre()
+                            + " | "
+                            + clienteCaptado.getRolEnElBanco()
             );
         }
     }
