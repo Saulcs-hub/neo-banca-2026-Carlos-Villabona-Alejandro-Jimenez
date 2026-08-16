@@ -6,6 +6,7 @@ import co.edu.unab.neobanca.productos.CuentaNomina;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
+import co.edu.unab.neobanca.productos.PrestamoPersonal;
 
 public class Main {
 
@@ -125,5 +126,90 @@ public class Main {
                 "Puntos restantes: "
                         + cuentaNomina.getPuntosAcumulados()
         );
+
+        System.out.println();
+        System.out.println(
+                "=== PRUEBA PRÉSTAMO PERSONAL ==="
+        );
+
+        PrestamoPersonal prestamo =
+                new PrestamoPersonal(
+                        "PRE-001",
+                        new BigDecimal("12000000"),
+                        new BigDecimal("0.18"),
+                        12,
+                        new BigDecimal("1000000"),
+                        "POL-001"
+                );
+
+        System.out.println(
+                "Número de préstamo: "
+                        + prestamo.getNumeroProducto()
+        );
+
+        System.out.println(
+                "Monto aprobado: "
+                        + moneda.format(
+                        prestamo.getMontoAprobado()
+                )
+        );
+
+        System.out.println(
+                "Deuda actual: "
+                        + moneda.format(
+                        prestamo.getDeudaActual()
+                )
+        );
+
+        System.out.println(
+                "Número de cuotas: "
+                        + prestamo.getNumeroCuotas()
+        );
+
+        System.out.println(
+                "Valor cuota: "
+                        + moneda.format(
+                        prestamo.getValorCuota()
+                )
+        );
+
+        System.out.println(
+                "Póliza asociada: "
+                        + prestamo
+                        .getSeguroVida()
+                        .getNumeroPoliza()
+        );
+
+        prestamo.pagarCuota();
+
+        System.out.println(
+                "Deuda después de pagar una cuota: "
+                        + moneda.format(
+                        prestamo.getDeudaActual()
+                )
+        );
+
+        System.out.println();
+
+        prestamo.saldarPorSiniestro();
+
+        System.out.println(
+                "Deuda después de activar el seguro: "
+                        + moneda.format(
+                        prestamo.getDeudaActual()
+                )
+        );
+
+        try {
+
+            prestamo.pagarCuota();
+
+        } catch (IllegalStateException e) {
+
+            System.out.println(
+                    "Validación correcta: "
+                            + e.getMessage()
+            );
+        }
     }
 }
