@@ -107,5 +107,23 @@ public class Main {
                 "¿Tiene convenio?: "
                         + (cuentaNomina.getConvenio() != null)
         );
+
+        System.out.println(
+                "Puntos acumulados: "
+                        + cuentaNomina.getPuntosAcumulados()
+        );
+
+        boolean redencion =
+                cuentaNomina.redimirPuntos(500);
+
+        System.out.println(
+                "¿Redención exitosa?: "
+                        + redencion
+        );
+
+        System.out.println(
+                "Puntos restantes: "
+                        + cuentaNomina.getPuntosAcumulados()
+        );
     }
 }
