@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.Locale;
 import co.edu.unab.neobanca.productos.PrestamoPersonal;
+import co.edu.unab.neobanca.productos.TarjetaCredito;
 
 public class Main {
 
@@ -211,5 +212,142 @@ public class Main {
                             + e.getMessage()
             );
         }
+        System.out.println();
+        System.out.println(
+                "=== PRUEBA TARJETA DE CRÉDITO ==="
+        );
+
+        TarjetaCredito tarjeta =
+                new TarjetaCredito(
+                        "TC-001",
+                        new BigDecimal("5000000"),
+                        new BigDecimal("0.24"),
+                        15,
+                        "CHIP-001",
+                        "TRACK-001"
+                );
+
+        System.out.println(
+                "Tarjeta: "
+                        + tarjeta.getNumeroProducto()
+        );
+
+        System.out.println(
+                "Cupo aprobado: "
+                        + moneda.format(
+                        tarjeta.getMontoAprobado()
+                )
+        );
+
+        System.out.println(
+                "Deuda inicial: "
+                        + moneda.format(
+                        tarjeta.getDeudaActual()
+                )
+        );
+
+        System.out.println(
+                "Día de corte: "
+                        + tarjeta.getDiaDeCorte()
+        );
+
+        System.out.println(
+                "Chip operativo: "
+                        + tarjeta
+                        .getChipSeguridad()
+                        .isOperativo()
+        );
+
+        System.out.println(
+                "Banda activa: "
+                        + tarjeta
+                        .getBandaMagnetica()
+                        .isActiva()
+        );
+
+        tarjeta.realizarConsumo(
+                new BigDecimal("1200000"),
+                "Mercado"
+        );
+
+        System.out.println(
+                "Deuda después del consumo: "
+                        + moneda.format(
+                        tarjeta.getDeudaActual()
+                )
+        );
+
+        System.out.println(
+                "Puntos acumulados: "
+                        + tarjeta.getPuntosAcumulados()
+        );
+        tarjeta.realizarPago(
+                new BigDecimal("200000")
+        );
+
+        System.out.println(
+                "Deuda después del pago: "
+                        + moneda.format(
+                        tarjeta.getDeudaActual()
+                )
+        );
+
+        tarjeta.cancelar();
+
+        System.out.println(
+                "Estado después de cancelar: "
+                        + tarjeta.getEstado()
+        );
+
+        System.out.println(
+                "Chip operativo después de cancelar: "
+                        + tarjeta
+                        .getChipSeguridad()
+                        .isOperativo()
+        );
+
+        System.out.println(
+                "Banda activa después de cancelar: "
+                        + tarjeta
+                        .getBandaMagnetica()
+                        .isActiva()
+        );
+
+        System.out.println();
+        System.out.println(
+                "=== PRUEBA LÍMITE DE CUPO ==="
+        );
+
+        TarjetaCredito tarjetaLimite =
+                new TarjetaCredito(
+                        "TC-002",
+                        new BigDecimal("5000000"),
+                        new BigDecimal("0.24"),
+                        20,
+                        "CHIP-002",
+                        "TRACK-002"
+                );
+
+        try {
+
+            tarjetaLimite.realizarConsumo(
+                    new BigDecimal("6000000"),
+                    "Tecnología"
+            );
+
+        } catch (IllegalArgumentException e) {
+
+            System.out.println(
+                    "Validación correcta: "
+                            + e.getMessage()
+            );
+        }
+
+        System.out.println(
+                "Deuda después del intento: "
+                        + moneda.format(
+                        tarjetaLimite.getDeudaActual()
+                )
+        );
     }
 }
