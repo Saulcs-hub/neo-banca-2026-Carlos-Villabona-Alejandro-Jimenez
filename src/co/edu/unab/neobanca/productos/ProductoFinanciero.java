@@ -1,6 +1,8 @@
 package co.edu.unab.neobanca.productos;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class ProductoFinanciero {
 
@@ -8,6 +10,7 @@ public abstract class ProductoFinanciero {
 
     // Caja negra: solamente esta clase controla el saldo.
     private BigDecimal saldo;
+    private final List<Transaccion> transacciones;
 
     private EstadoProducto estado;
 
@@ -16,6 +19,7 @@ public abstract class ProductoFinanciero {
         this.numeroProducto = numeroProducto;
         this.saldo = BigDecimal.ZERO;
         this.estado = EstadoProducto.ACTIVO;
+        this.transacciones = new ArrayList<>();
     }
 
     public final String getNumeroProducto() {
@@ -37,26 +41,26 @@ public abstract class ProductoFinanciero {
 
         saldo = saldo.add(monto);
 
-        System.out.println(
-                "Depósito realizado: " +
-                        monto +
-                        " - " +
-                        descripcion
+        registrarTransaccion(
+                TipoTransaccion.DEPOSITO,
+                monto,
+                descripcion
         );
     }
 
-    public final void retirar(BigDecimal monto, String descripcion) {
+    public final void retirar(
+            BigDecimal monto,
+            String descripcion) {
 
         validarProductoActivo();
         validarRetiro(monto);
 
         saldo = saldo.subtract(monto);
 
-        System.out.println(
-                "Retiro realizado: " +
-                        monto +
-                        " - " +
-                        descripcion
+        registrarTransaccion(
+                TipoTransaccion.RETIRO,
+                monto,
+                descripcion
         );
     }
 
@@ -106,5 +110,23 @@ public abstract class ProductoFinanciero {
 
     protected void alCerrar() {
         // Hook para comportamientos específicos de las subclases.
+    }
+    private void registrarTransaccion(
+            TipoTransaccion tipo,
+            BigDecimal monto,
+            String descripcion) {
+
+        Transaccion transaccion =
+                new Transaccion(
+                        tipo,
+                        monto,
+                        descripcion
+                );
+
+        transacciones.add(transaccion);
+    }
+
+    public final List<Transaccion> getTransacciones() {
+        return List.copyOf(transacciones);
     }
 }

@@ -26,6 +26,7 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.Locale;
 
+
 public class Main {
 
     public static void main(String[] args) {
@@ -1013,6 +1014,31 @@ public class Main {
                             + " | CO2 evitado: "
                             + certificado.getKgCO2Evitados()
                             + " kg"
+            );
+        }
+
+        System.out.println();
+        System.out.println(
+                "--- HISTORIAL DE TRANSACCIONES ---"
+        );
+
+        for (var transaccion
+                : cuenta.getTransacciones()) {
+
+            System.out.println(
+                    transaccion.getTipo()
+                            + " | "
+                            + moneda.format(
+                            transaccion.getMonto()
+                    )
+                            + " | "
+                            + transaccion.getDescripcion()
+            );
+
+            System.out.println(
+                    "  Conservar hasta mínimo: "
+                            + transaccion
+                            .getFechaMinimaEliminacion()
             );
         }
 
